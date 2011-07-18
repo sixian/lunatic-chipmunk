@@ -28,9 +28,11 @@
 
 int luaopen_chipmunk(lua_State *);
 
+//space
 static int chipmunk_NewSpace(lua_State *);
 static int chipmunk_space_newindex(lua_State *);
 static int chipmunk_space_index(lua_State *);
 static int chipmunk_space_gc(lua_State *);
+static int chipmunk_space_Step(lua_State *);
 
 #endif
