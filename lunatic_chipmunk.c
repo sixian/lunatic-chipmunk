@@ -52,6 +52,7 @@ static int chipmunk_NewSpace(lua_State *vm){
 }
 
 static int chipmunk_space_newindex(lua_State *vm){
+    const char *key = lua_tostring(vm, 2);
     return 0;
 }
 

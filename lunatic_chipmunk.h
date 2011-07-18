@@ -26,6 +26,34 @@
 #include <lua5.1/lauxlib.h>
 #include <chipmunk/chipmunk.h>
 
+inline void cpVectToTable(cpVect vector, lua_State *vm){
+    lua_createtable(vm, 0, 2);
+    lua_pushnumber(vm, vector.x);
+    lua_setfield(vm, -2, "x");
+    lua_pushnumber(vm, vector.y);
+    lua_setfield(vm, -2, "y");
+    //+1
+}
+
+inline cpVect TableTocpVect(int indextable, lua_State *vm){
+    cpVect vector = cpvzero;
+    lua_getfield(vm, indextable, "x");
+    if (lua_isnil(vm, -1)){
+        lua_pop(vm, 1);
+        lua_rawgeti(vm, indextable, 1);
+    }
+    vector.x = lua_tonumber(vm, -1);
+    lua_pop(vm, 1);
+    lua_getfield(vm, indextable, "y");
+    if (lua_isnil(vm, -1)){
+        lua_pop(vm, 1);
+        lua_rawgeti(vm, indextable, 2);
+    }
+    vector.y = lua_tonumber(vm, -1);
+    lua_pop(vm, 1);
+    return vector;
+}
+
 int luaopen_chipmunk(lua_State *);
 
 //space
