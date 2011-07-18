@@ -23,6 +23,41 @@
 #include <lunatic_chipmunk.h>
 
 int luaopen_chipmunk(lua_State *vm){
-    printf("\nInit chipmunk");
+    printf("\nInit chipmunk\n");
+    luaL_Reg functions[] = {
+    {"NewSpace", chipmunk_NewSpace},
+    {NULL, NULL}};
+    luaL_register(vm, "chipmunk", functions);
+    lua_pop(vm, 1);
+    luaL_Reg scenemeta[] = {
+    {"__newindex", chipmunk_space_newindex},
+    {"__index", chipmunk_space_index},
+    {"__gc", chipmunk_space_gc},
+    {NULL, NULL}};
+    lua_createtable(vm, 0, 3);
+    luaL_register(vm, NULL, scenemeta);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.scenemeta");
 }
-   
+
+static int chipmunk_NewSpace(lua_State *vm){
+    cpSpace *space = lua_newuserdata(vm, sizeof(cpSpace));
+    cpSpaceInit(space);
+    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.scenemeta");
+    lua_setmetatable(vm, -2);
+    return 1;
+}
+
+static int chipmunk_space_newindex(lua_State *vm){
+    return 0;
+}
+
+static int chipmunk_space_index(lua_State *vm){
+    lua_pushnil(vm);
+    return 1;
+}
+
+static int chipmunk_space_gc(lua_State *vm){
+    cpSpace *space = (cpSpace *)lua_touserdata(vm, 1);
+    cpSpaceDestroy(space);
+    printf("Delete space: %p\n", space);
+}
