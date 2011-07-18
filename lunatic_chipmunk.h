@@ -26,7 +26,7 @@
 #include <lua5.1/lauxlib.h>
 #include <chipmunk/chipmunk.h>
 
-inline void cpVectToTable(cpVect vector, lua_State *vm){
+inline void chipmunk_cpVectToTable(cpVect vector, lua_State *vm){
     lua_createtable(vm, 0, 2);
     lua_pushnumber(vm, vector.x);
     lua_setfield(vm, -2, "x");
@@ -35,7 +35,7 @@ inline void cpVectToTable(cpVect vector, lua_State *vm){
     //+1
 }
 
-inline cpVect TableTocpVect(int indextable, lua_State *vm){
+inline cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm){
     cpVect vector = cpvzero;
     lua_getfield(vm, indextable, "x");
     if (lua_isnil(vm, -1)){
@@ -62,6 +62,7 @@ static int chipmunk_space_newindex(lua_State *);
 static int chipmunk_space_index(lua_State *);
 static int chipmunk_space_gc(lua_State *);
 static int chipmunk_space_Step(lua_State *);
+static int chipmunk_space_AddBody(lua_State *);
 
 //body
 static int chipmunk_NewBody(lua_State *);

@@ -71,6 +71,10 @@ static int chipmunk_space_index(lua_State *vm){
         lua_pushcfunction(vm, chipmunk_space_Step);
         return 1;
     }
+    else if (strcmp("AddBody", key) == 0){
+        lua_pushcfunction(vm, chipmunk_space_AddBody);
+        return 1;
+    }
     lua_pushnil(vm);
     return 1;
 }
@@ -85,6 +89,14 @@ static int chipmunk_space_Step(lua_State *vm){
     //space, number
     cpSpace *space = (cpSpace *)lua_touserdata(vm, 1);
     cpSpaceStep(space, lua_tonumber(vm, 2));
+    return 0;
+}
+
+static int chipmunk_space_AddBody(lua_State *vm){
+    //space, body
+    cpSpace *space = lua_touserdata(vm, 1);
+    cpBody *body = lua_touserdata(vm, 2);
+    cpSpaceAddBody(space, body);
     return 0;
 }
 
@@ -108,10 +120,10 @@ static int chipmunk_body_newindex(lua_State *vm){
     const char *key = lua_tostring(vm, 2);
     cpBody *body = lua_touserdata(vm, 1);
     if (strcmp("pos", key) == 0 && lua_istable(vm, 3)){
-        cpBodySetPos(body, TableTocpVect(3, vm));
+        cpBodySetPos(body, chipmunk_TableTocpVect(3, vm));
     }
     else if (strcmp("vel", key) == 0 && lua_istable(vm, 3)){
-        cpBodySetVel(body, TableTocpVect(3, vm));
+        cpBodySetVel(body, chipmunk_TableTocpVect(3, vm));
     }
     return 0;
 }
