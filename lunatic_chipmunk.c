@@ -23,10 +23,39 @@
 #include <string.h>
 #include <lunatic_chipmunk.h>
 
+void chipmunk_cpVectToTable(cpVect vector, lua_State *vm){
+    lua_createtable(vm, 0, 2);
+    lua_pushnumber(vm, vector.x);
+    lua_setfield(vm, -2, "x");
+    lua_pushnumber(vm, vector.y);
+    lua_setfield(vm, -2, "y");
+    //+1
+}
+
+cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm){
+    cpVect vector = cpvzero;
+    lua_getfield(vm, indextable, "x");
+    if (lua_isnil(vm, -1)){
+        lua_pop(vm, 1);
+        lua_rawgeti(vm, indextable, 1);
+    }
+    vector.x = lua_tonumber(vm, -1);
+    lua_pop(vm, 1);
+    lua_getfield(vm, indextable, "y");
+    if (lua_isnil(vm, -1)){
+        lua_pop(vm, 1);
+        lua_rawgeti(vm, indextable, 2);
+    }
+    vector.y = lua_tonumber(vm, -1);
+    lua_pop(vm, 1);
+    return vector;
+}
+
 int luaopen_chipmunk(lua_State *vm){
     printf("\nInit chipmunk\n");
     luaL_Reg functions[] = {
     {"NewSpace", chipmunk_NewSpace},
+    {"NewBody", chipmunk_NewBody},
     {NULL, NULL}};
     
     luaL_register(vm, "chipmunk", functions);
@@ -47,7 +76,7 @@ int luaopen_chipmunk(lua_State *vm){
     {"__gc", chipmunk_body_gc},
     {NULL, NULL}};
     lua_createtable(vm, 0, 3);
-    luaL_register(vm, NULL, scenemeta);
+    luaL_register(vm, NULL, bodymeta);
     lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
     
 }
@@ -111,7 +140,7 @@ static int chipmunk_space_AddBody(lua_State *vm){
 
 static int chipmunk_NewBody(lua_State *vm){
     //mass, moi
-        cpFloat m = INFINITY, moi = INFINITY;
+    cpFloat m = INFINITY, moi = INFINITY;
     if (lua_isnumber(vm, 1)){
         m = lua_tonumber(vm, 1);
     }
@@ -141,11 +170,11 @@ static int chipmunk_body_index(lua_State *vm){
     const char *key = lua_tostring(vm, 2);
     cpBody *body = lua_touserdata(vm, 1);
     if (strcmp("pos", key) == 0){
-        cpVectToTable(cpBodyGetPos(body), vm);
+        chipmunk_cpVectToTable(cpBodyGetPos(body), vm);
         return 1;
     }
     else if (strcmp("vel", key) == 0){
-        cpVectToTable(cpBodyGetVel(body), vm);
+        chipmunk_cpVectToTable(cpBodyGetVel(body), vm);
         return 1;
     }
     lua_pushnil(vm);
