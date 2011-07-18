@@ -63,4 +63,10 @@ static int chipmunk_space_index(lua_State *);
 static int chipmunk_space_gc(lua_State *);
 static int chipmunk_space_Step(lua_State *);
 
+//body
+static int chipmunk_NewBody(lua_State *);
+static int chipmunk_body_newindex(lua_State *);
+static int chipmunk_body_index(lua_State *);
+static int chipmunk_body_gc(lua_State *);
+
 #endif

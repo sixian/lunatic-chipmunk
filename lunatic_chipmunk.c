@@ -39,14 +39,23 @@ int luaopen_chipmunk(lua_State *vm){
     {NULL, NULL}};
     lua_createtable(vm, 0, 3);
     luaL_register(vm, NULL, scenemeta);
-    lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.scenemeta");
+    lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.spacemeta");
+    
+    luaL_Reg bodymeta[] = {
+    {"__newindex", chipmunk_body_newindex},
+    {"__index", chipmunk_body_index},
+    {"__gc", chipmunk_body_gc},
+    {NULL, NULL}};
+    lua_createtable(vm, 0, 3);
+    luaL_register(vm, NULL, scenemeta);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
     
 }
 
 static int chipmunk_NewSpace(lua_State *vm){
     cpSpace *space = lua_newuserdata(vm, sizeof(cpSpace));
     cpSpaceInit(space);
-    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.scenemeta");
+    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.spacemeta");
     lua_setmetatable(vm, -2);
     return 1;
 }
@@ -77,4 +86,53 @@ static int chipmunk_space_Step(lua_State *vm){
     cpSpace *space = (cpSpace *)lua_touserdata(vm, 1);
     cpSpaceStep(space, lua_tonumber(vm, 2));
     return 0;
+}
+
+static int chipmunk_NewBody(lua_State *vm){
+    //mass, moi
+        cpFloat m = INFINITY, moi = INFINITY;
+    if (lua_isnumber(vm, 1)){
+        m = lua_tonumber(vm, 1);
+    }
+    if (lua_isnumber(vm, 2)){
+        moi = lua_tonumber(vm, 2);
+    }
+    cpBody *body = lua_newuserdata(vm, sizeof(cpBody));
+    cpBodyInit(body, m, moi);
+    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
+    lua_setmetatable(vm, -2);
+    return 1;
+}
+
+static int chipmunk_body_newindex(lua_State *vm){
+    const char *key = lua_tostring(vm, 2);
+    cpBody *body = lua_touserdata(vm, 1);
+    if (strcmp("pos", key) == 0 && lua_istable(vm, 3)){
+        cpBodySetPos(body, TableTocpVect(3, vm));
+    }
+    else if (strcmp("vel", key) == 0 && lua_istable(vm, 3)){
+        cpBodySetVel(body, TableTocpVect(3, vm));
+    }
+    return 0;
+}
+
+static int chipmunk_body_index(lua_State *vm){
+    const char *key = lua_tostring(vm, 2);
+    cpBody *body = lua_touserdata(vm, 1);
+    if (strcmp("pos", key) == 0){
+        cpVectToTable(cpBodyGetPos(body), vm);
+        return 1;
+    }
+    else if (strcmp("vel", key) == 0){
+        cpVectToTable(cpBodyGetVel(body), vm);
+        return 1;
+    }
+    lua_pushnil(vm);
+    return 1;
+}
+
+static int chipmunk_body_gc(lua_State *vm){
+    cpBody *body = lua_touserdata(vm, 1);
+    cpBodyDestroy(body);
+    printf("Delete body: %p\n", body);
 }
