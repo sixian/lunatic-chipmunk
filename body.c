@@ -19,7 +19,7 @@
 
 #include <lunatic_chipmunk.h>
 
-static int chipmunk_NewBody(lua_State *vm){
+int chipmunk_NewBody(lua_State *vm){
     //mass, moi
     cpFloat m = INFINITY, moi = INFINITY;
     if (lua_isnumber(vm, 1)){
@@ -35,7 +35,7 @@ static int chipmunk_NewBody(lua_State *vm){
     return 1;
 }
 
-static int chipmunk_body_newindex(lua_State *vm){
+int chipmunk_body_newindex(lua_State *vm){
     const char *key = lua_tostring(vm, 2);
     cpBody *body = lua_touserdata(vm, 1);
     if (strcmp("pos", key) == 0 && lua_istable(vm, 3)){
@@ -47,7 +47,7 @@ static int chipmunk_body_newindex(lua_State *vm){
     return 0;
 }
 
-static int chipmunk_body_index(lua_State *vm){
+int chipmunk_body_index(lua_State *vm){
     const char *key = lua_tostring(vm, 2);
     cpBody *body = lua_touserdata(vm, 1);
     if (strcmp("pos", key) == 0){
@@ -62,7 +62,7 @@ static int chipmunk_body_index(lua_State *vm){
     return 1;
 }
 
-static int chipmunk_body_gc(lua_State *vm){
+int chipmunk_body_gc(lua_State *vm){
     cpBody *body = lua_touserdata(vm, 1);
     cpBodyDestroy(body);
     printf("Delete body: %p\n", body);
