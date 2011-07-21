@@ -56,8 +56,8 @@ int chipmunk_space_index(lua_State *vm){
 
 int chipmunk_space_gc(lua_State *vm){
     chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
-    printf("Delete space: %p\n", object_space);
     cpSpaceFree((cpSpace *)object_space->object);
+    printf("Delete space: %p\n", object_space);
 }
 
 int chipmunk_space_Step(lua_State *vm){
