@@ -24,6 +24,8 @@
 #include <lua5.1/lauxlib.h>
 #include <chipmunk/chipmunk.h>
 
+#define RETURN_NIL lua_pushnil(vm);return 1;
+
 void chipmunk_cpVectToTable(cpVect vector, lua_State *vm);//-0,+1
 cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm);//-0,+0
 
@@ -36,6 +38,8 @@ int chipmunk_space_index(lua_State *);
 int chipmunk_space_gc(lua_State *);
 int chipmunk_space_Step(lua_State *);
 int chipmunk_space_AddBody(lua_State *);
+int chipmunk_space_AddShape(lua_State *);
+int chipmunk_space_NewBoxShape(lua_State *);
 
 //body
 int chipmunk_NewBody(lua_State *);

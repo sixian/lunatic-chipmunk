@@ -67,3 +67,21 @@ int chipmunk_body_gc(lua_State *vm){
     cpBodyDestroy(body);
     printf("Delete body: %p\n", body);
 }
+
+int chipmunk_body_NewBoxShape(lua_State *vm){
+    //body, with, height -> shape (box)
+    cpBody *body = lua_touserdata(vm, 1);
+    cpFloat width = 0, height = 0;
+    width = lua_tonumber(vm, 2);
+    height = lua_tonumber(vm, 3);
+    if (width <= 0){
+        printf("body:NewBoxShape -> width must be greater than 0.");
+        RETURN_NIL;
+    }
+    if (height <= 0){
+        printf("body:NewBoxShape -> width must be greater than 0.");
+        RETURN_NIL;
+    }
+    chipmunk_NewBoxShape(body, width, height, vm);
+    return 1;
+}

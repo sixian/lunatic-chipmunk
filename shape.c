@@ -20,7 +20,7 @@
 #include <lunatic_chipmunk.h>
 
 //-0, +1
-cpShape *chipmunk_NewBoxShape(cpBpdy *body, cpFloat width, cpFloat height, lua_State *vm){
+cpShape *chipmunk_NewBoxShape(cpBody *body, cpFloat width, cpFloat height, lua_State *vm){
     cpShape *shape = lua_newuserdata(vm, sizeof(cpShape));
     cpBoxShapeInit(shape, body, width, height);
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
@@ -37,9 +37,9 @@ int chipmunk_shape_index(lua_State *vm){
     return 1;
 }
 
-int chipmunk_space_gc(lua_State *vm){
+int chipmunk_shape_gc(lua_State *vm){
     cpShape *shape = lua_touserdata(vm, 1);
     cpShapeDestroy(shape);
-    printf("\nDelete shape: %p", shape):
+    printf("\nDelete shape: %p", shape);
     return 0;
 }
