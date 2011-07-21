@@ -78,8 +78,12 @@ int chipmunk_space_AddBody(lua_State *vm){
         printf("chipmunk: Object can't call :AddBody\n");
         return 0;
     }
-    cpBody *body = lua_touserdata(vm, 2);
-    cpSpaceAddBody((cpSpace *)object_space->object, body);
+    chipmunk_object *object_body = (chipmunk_object *)lua_touserdata(vm, 2);
+    if (object_body == NULL || object_body->type != Body){
+        printf("space:AddBody(): Can't add a body\n");
+        return 0;
+    }
+    cpSpaceAddBody((cpSpace *)object_space->object, (cpBody *)object_body->object);
     return 0;
 }
 
@@ -90,8 +94,12 @@ int chipmunk_space_AddShape(lua_State *vm){
         printf("chipmunk: Object can't call :AddShape\n");
         return 0;
     }
-    cpShape *shape = lua_touserdata(vm, 2);
-    cpSpaceAddShape((cpSpace *)object_space->object, shape);
+    chipmunk_object *object_shape = (chipmunk_object *)lua_touserdata(vm, 2);
+    if (object_shape == NULL || object_shape->type != PolyShape){
+        printf("space:AddShape(): Can't add a shape\n");
+        return 0;
+    }
+    cpSpaceAddShape((cpSpace *)object_space->object, (cpShape *)object_shape->object);
     return 0;
 }
 
