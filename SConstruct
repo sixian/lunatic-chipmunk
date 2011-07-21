@@ -9,4 +9,3 @@ SharedLibrary("chipmunk", Glob("*.c"), CPPPATH=["."], LIBS=["lua5.1", "chipmunk"
 #Copy("tempfile", "$SOURCE"),
 #Move("$TARGET", "tempfile"),
 #])
-

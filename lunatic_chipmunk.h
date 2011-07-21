@@ -21,7 +21,7 @@
 #define _lunatic_chipmunk_
 
 #include <lua5.1/lua.h>
-#include <lua5.1/laux.h>
+#include <lua5.1/lauxlib.h>
 #include <chipmunk/chipmunk.h>
 
 void chipmunk_cpVectToTable(cpVect vector, lua_State *vm);//-0,+1
@@ -30,17 +30,17 @@ cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm);//-0,+0
 int luaopen_chipmunk(lua_State *);
 
 //space
-static int chipmunk_NewSpace(lua_State *);
-static int chipmunk_space_newindex(lua_State *);
-static int chipmunk_space_index(lua_State *);
-static int chipmunk_space_gc(lua_State *);
-static int chipmunk_space_Step(lua_State *);
-static int chipmunk_space_AddBody(lua_State *);
+int chipmunk_NewSpace(lua_State *);
+int chipmunk_space_newindex(lua_State *);
+int chipmunk_space_index(lua_State *);
+int chipmunk_space_gc(lua_State *);
+int chipmunk_space_Step(lua_State *);
+int chipmunk_space_AddBody(lua_State *);
 
 //body
-static int chipmunk_NewBody(lua_State *);
-static int chipmunk_body_newindex(lua_State *);
-static int chipmunk_body_index(lua_State *);
-static int chipmunk_body_gc(lua_State *);
+int chipmunk_NewBody(lua_State *);
+int chipmunk_body_newindex(lua_State *);
+int chipmunk_body_index(lua_State *);
+int chipmunk_body_gc(lua_State *);
 
 #endif
