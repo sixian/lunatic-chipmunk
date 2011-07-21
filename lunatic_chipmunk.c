@@ -23,64 +23,6 @@
 #include <string.h>
 #include <lunatic_chipmunk.h>
 
-void chipmunk_cpVectToTable(cpVect vector, lua_State *vm){
-    lua_createtable(vm, 0, 2);
-    lua_pushnumber(vm, vector.x);
-    lua_setfield(vm, -2, "x");
-    lua_pushnumber(vm, vector.y);
-    lua_setfield(vm, -2, "y");
-    //+1
-}
-
-cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm){
-    cpVect vector = cpvzero;
-    lua_getfield(vm, indextable, "x");
-    if (lua_isnil(vm, -1)){
-        lua_pop(vm, 1);
-        lua_rawgeti(vm, indextable, 1);
-    }
-    vector.x = lua_tonumber(vm, -1);
-    lua_pop(vm, 1);
-    lua_getfield(vm, indextable, "y");
-    if (lua_isnil(vm, -1)){
-        lua_pop(vm, 1);
-        lua_rawgeti(vm, indextable, 2);
-    }
-    vector.y = lua_tonumber(vm, -1);
-    lua_pop(vm, 1);
-    return vector;
-}
-
-int luaopen_chipmunk(lua_State *vm){
-    printf("\nInit chipmunk\n");
-    luaL_Reg functions[] = {
-    {"NewSpace", chipmunk_NewSpace},
-    {"NewBody", chipmunk_NewBody},
-    {NULL, NULL}};
-    
-    luaL_register(vm, "chipmunk", functions);
-    lua_pop(vm, 1);
-    
-    luaL_Reg scenemeta[] = {
-    {"__newindex", chipmunk_space_newindex},
-    {"__index", chipmunk_space_index},
-    {"__gc", chipmunk_space_gc},
-    {NULL, NULL}};
-    lua_createtable(vm, 0, 3);
-    luaL_register(vm, NULL, scenemeta);
-    lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.spacemeta");
-    
-    luaL_Reg bodymeta[] = {
-    {"__newindex", chipmunk_body_newindex},
-    {"__index", chipmunk_body_index},
-    {"__gc", chipmunk_body_gc},
-    {NULL, NULL}};
-    lua_createtable(vm, 0, 3);
-    luaL_register(vm, NULL, bodymeta);
-    lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
-    
-}
-
 static int chipmunk_NewSpace(lua_State *vm){
     cpSpace *space = lua_newuserdata(vm, sizeof(cpSpace));
     cpSpaceInit(space);
