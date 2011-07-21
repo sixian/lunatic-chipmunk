@@ -20,8 +20,8 @@
 #include <lunatic_chipmunk.h>
 
 //-0, +1
-cpShape *chipmunk_NewBoxShape(cpBody *body, cpFloat width, cpFloat height, lua_State *vm){
-    cpShape *shape = lua_newuserdata(vm, sizeof(cpShape));
+cpPolyShape *chipmunk_NewBoxShape(cpBody *body, cpFloat width, cpFloat height, lua_State *vm){
+    cpPolyShape *shape = lua_newuserdata(vm, sizeof(cpPolyShape));
     cpBoxShapeInit(shape, body, width, height);
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
     lua_setmetatable(vm, -2);

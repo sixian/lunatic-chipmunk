@@ -52,6 +52,7 @@ int luaopen_chipmunk(lua_State *vm){
     luaL_Reg functions[] = {
     {"NewSpace", chipmunk_NewSpace},
     {"NewBody", chipmunk_NewBody},
+    {"MomentForBox", chipmunk_MomentForBox},
     {NULL, NULL}};
     
     luaL_register(vm, "chipmunk", functions);

@@ -43,15 +43,16 @@ int chipmunk_space_NewBoxShape(lua_State *);
 
 //body
 int chipmunk_NewBody(lua_State *);
-int chipmunk_MomentForBox(lua_State *);
 int chipmunk_body_newindex(lua_State *);
 int chipmunk_body_index(lua_State *);
 int chipmunk_body_gc(lua_State *);
 int chipmunk_body_NewBoxShape(lua_State *);
 
+int chipmunk_MomentForBox(lua_State *);
+
 //Shape
 //Shapes are created with the a space's body or with a body.
-cpShape *chipmunk_NewBoxShape(cpBody *, cpFloat, cpFloat, lua_State *);//-0, +1
+cpPolyShape *chipmunk_NewBoxShape(cpBody *, cpFloat, cpFloat, lua_State *);//-0, +1
 int chipmunk_shape_newindex(lua_State *);
 int chipmunk_shape_index(lua_State *);
 int chipmunk_shape_gc(lua_State *);

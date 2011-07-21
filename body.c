@@ -86,3 +86,13 @@ int chipmunk_body_NewBoxShape(lua_State *vm){
     chipmunk_NewBoxShape(body, width, height, vm);
     return 1;
 }
+
+int chipmunk_MomentForBox(lua_State *vm){
+    //m, width, height
+    cpFloat m = 0, width = 0, height = 0;
+    m = lua_tonumber(vm, 1);
+    width = lua_tonumber(vm, 2);
+    height = lua_tonumber(vm, 3);
+    lua_pushnumber(vm, cpMomentForBox(m, width, height));
+    return 1;
+}
