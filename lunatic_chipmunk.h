@@ -43,6 +43,7 @@ int chipmunk_space_NewBoxShape(lua_State *);
 
 //body
 int chipmunk_NewBody(lua_State *);
+int chipmunk_MomentForBox(lua_State *);
 int chipmunk_body_newindex(lua_State *);
 int chipmunk_body_index(lua_State *);
 int chipmunk_body_gc(lua_State *);

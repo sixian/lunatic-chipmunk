@@ -70,3 +70,29 @@ int chipmunk_space_AddBody(lua_State *vm){
     cpSpaceAddBody(space, body);
     return 0;
 }
+
+int chipmunk_space_AddShape(lua_State *vm){
+    //space, shape
+    cpSpace *space = lua_touserdata(vm, 1);
+    cpShape *shape = lua_touserdata(vm, 2);
+    cpSpaceAddShape(space, shape);
+    return 0;
+}
+
+int chipmunk_space_NewBoxShape(lua_State *vm){
+    //space, width, height -> shape
+    cpSpace *space = lua_touserdata(vm, 1);
+    cpFloat width = 0, height = 0;
+    width = lua_tonumber(vm, 2);
+    height = lua_tonumber(vm, 3);
+    if (width <= 0){
+        printf("space:NewBoxShape -> width must be greater than 0.");
+        RETURN_NIL;
+    }
+    if (height <= 0){
+        printf("space:NewBoxShape -> height must be greater than 0.");
+        RETURN_NIL;
+    }
+    chipmunk_NewBoxShape(cpSpaceGetStaticBody(space), width, height, vm);
+    return 1;
+}

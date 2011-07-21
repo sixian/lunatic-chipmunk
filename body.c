@@ -58,7 +58,8 @@ int chipmunk_body_index(lua_State *vm){
         chipmunk_cpVectToTable(cpBodyGetVel(body), vm);
         return 1;
     }
-    lua_pushnil(vm);
+    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.body:");
+    lua_getfield(vm, -1, key);
     return 1;
 }
 
@@ -79,7 +80,7 @@ int chipmunk_body_NewBoxShape(lua_State *vm){
         RETURN_NIL;
     }
     if (height <= 0){
-        printf("body:NewBoxShape -> width must be greater than 0.");
+        printf("body:NewBoxShape -> height must be greater than 0.");
         RETURN_NIL;
     }
     chipmunk_NewBoxShape(body, width, height, vm);

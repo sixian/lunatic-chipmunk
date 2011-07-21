@@ -69,6 +69,8 @@ int luaopen_chipmunk(lua_State *vm){
     luaL_Reg spacemethods[] = {
     {"Step", chipmunk_space_Step},
     {"AddBody", chipmunk_space_AddBody},
+    {"AddShape", chipmunk_space_AddShape},
+    {"NewBoxShape", chipmunk_space_NewBoxShape},
     {NULL, NULL}};
     lua_createtable(vm, 0, 2);
     luaL_register(vm, NULL, spacemethods);
@@ -82,6 +84,13 @@ int luaopen_chipmunk(lua_State *vm){
     lua_createtable(vm, 0, 3);
     luaL_register(vm, NULL, bodymeta);
     lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
+    
+    luaL_Reg bodymethods[] = {
+    {"NewBoxShape", chipmunk_body_NewBoxShape},
+    {NULL, NULL}};
+    lua_createtable(vm, 0, 1);
+    luaL_register(vm, NULL, bodymethods);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.body:");
     
     luaL_Reg shapemeta[] = {
     {"__newindex", chipmunk_shape_newindex},
