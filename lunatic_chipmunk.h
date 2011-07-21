@@ -21,7 +21,7 @@
 #define _lunatic_chipmunk_
 
 #include <lua5.1/lua.h>
-#include <lua5.1/lauxlib.h>
+#include <lua5.1/laux.h>
 #include <chipmunk/chipmunk.h>
 
 void chipmunk_cpVectToTable(cpVect vector, lua_State *vm);//-0,+1
