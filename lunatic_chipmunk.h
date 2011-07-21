@@ -31,15 +31,15 @@ cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm);//-0,+0
 
 int luaopen_chipmunk(lua_State *);
 
-typedef enum{
-    Scene,
+typedef enum __chipmunk_type{
+    Space,
     Body,
     StaticBody,
     PolyShape
-}chipmunk_object_type;
+}chipmunk_type;
 
-typedef struct{
-    chipmunk_object_type object_type;
+typedef struct __chipmunk_object{
+    chipmunk_type type;
     void *object;
 }chipmunk_object;
 

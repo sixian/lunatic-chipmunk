@@ -22,15 +22,18 @@
 #include <lunatic_chipmunk.h>
 
 int chipmunk_NewSpace(lua_State *vm){
-    cpSpace *space = lua_newuserdata(vm, sizeof(cpSpace));
-    cpSpaceInit(space);
+    //-> space
+    chipmunk_object *object_space = lua_newuserdata(vm, sizeof(chipmunk_object));
+    object_space->object = cpSpaceNew();
+    object_space->type = Space;
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.spacemeta");
     lua_setmetatable(vm, -2);
     return 1;
 }
 
 int chipmunk_space_newindex(lua_State *vm){
-    cpSpace *space = (cpSpace *)lua_touserdata(vm, 1);
+    chipmunk_object *object_space = lua_touserdata(vm, 1);
+    cpSpace *space = object_space->object;
     const char *key = lua_tostring(vm, 2);
     if (strcmp("gravity", key) == 0 && lua_istable(vm, 3)){
         cpSpaceSetGravity(space, chipmunk_TableTocpVect(3, vm));
@@ -39,7 +42,8 @@ int chipmunk_space_newindex(lua_State *vm){
 }
 
 int chipmunk_space_index(lua_State *vm){
-    cpSpace *space = (cpSpace *)lua_touserdata(vm, 1);
+    chipmunk_object *object_space = lua_touserdata(vm, 1);
+    cpSpace *space = object_space->object;
     const char *key = lua_tostring(vm, 2);
     if (strcmp("gravity", key) == 0){
         chipmunk_cpVectToTable(cpSpaceGetGravity(space), vm);
@@ -51,37 +55,53 @@ int chipmunk_space_index(lua_State *vm){
 }
 
 int chipmunk_space_gc(lua_State *vm){
-    cpSpace *space = (cpSpace *)lua_touserdata(vm, 1);
-    cpSpaceDestroy(space);
-    printf("Delete space: %p\n", space);
+    chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
+    printf("Delete space: %p\n", object_space);
+    cpSpaceFree((cpSpace *)object_space->object);
 }
 
 int chipmunk_space_Step(lua_State *vm){
     //space, number
-    cpSpace *space = (cpSpace *)lua_touserdata(vm, 1);
-    cpSpaceStep(space, lua_tonumber(vm, 2));
+    chipmunk_object *object_space = lua_touserdata(vm, 1);
+    if (object_space == NULL || object_space->type != Space){
+        printf("chipmunk: Object can't call :Step\n");
+        return 0;
+    }
+    cpSpaceStep((cpSpace *)object_space->object, lua_tonumber(vm, 2));
     return 0;
 }
 
 int chipmunk_space_AddBody(lua_State *vm){
     //space, body
-    cpSpace *space = lua_touserdata(vm, 1);
+    chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
+    if (object_space == NULL || object_space->type != Space){
+        printf("chipmunk: Object can't call :AddBody\n");
+        return 0;
+    }
     cpBody *body = lua_touserdata(vm, 2);
-    cpSpaceAddBody(space, body);
+    cpSpaceAddBody((cpSpace *)object_space->object, body);
     return 0;
 }
 
 int chipmunk_space_AddShape(lua_State *vm){
     //space, shape
-    cpSpace *space = lua_touserdata(vm, 1);
+    chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
+    if (object_space == NULL || object_space->type != Space){
+        printf("chipmunk: Object can't call :AddShape\n");
+        return 0;
+    }
     cpShape *shape = lua_touserdata(vm, 2);
-    cpSpaceAddShape(space, shape);
+    cpSpaceAddShape((cpSpace *)object_space->object, shape);
     return 0;
 }
 
 int chipmunk_space_NewBoxShape(lua_State *vm){
     //space, width, height -> shape
-    cpSpace *space = lua_touserdata(vm, 1);
+    chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
+    if (object_space == NULL || object_space->type != Space){
+        printf("chipmunk: Object can't call :NewBoxShape\n");
+        return 0;
+    }
     cpFloat width = 0, height = 0;
     width = lua_tonumber(vm, 2);
     height = lua_tonumber(vm, 3);
@@ -93,6 +113,6 @@ int chipmunk_space_NewBoxShape(lua_State *vm){
         printf("space:NewBoxShape -> height must be greater than 0.");
         RETURN_NIL;
     }
-    chipmunk_NewBoxShape(cpSpaceGetStaticBody(space), width, height, vm);
+    chipmunk_NewBoxShape(cpSpaceGetStaticBody((cpSpace *)object_space->object), width, height, vm);
     return 1;
 }

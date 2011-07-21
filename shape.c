@@ -40,6 +40,6 @@ int chipmunk_shape_index(lua_State *vm){
 int chipmunk_shape_gc(lua_State *vm){
     cpShape *shape = lua_touserdata(vm, 1);
     cpShapeDestroy(shape);
-    printf("\nDelete shape: %p", shape);
+    printf("Delete shape: %p\n", shape);
     return 0;
 }

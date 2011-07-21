@@ -27,6 +27,7 @@ int chipmunk_NewBody(lua_State *vm){
     }
     if (lua_isnumber(vm, 2)){
         moi = lua_tonumber(vm, 2);
+        printf("\nBody moi: %g", moi);
     }
     cpBody *body = lua_newuserdata(vm, sizeof(cpBody));
     cpBodyInit(body, m, moi);
