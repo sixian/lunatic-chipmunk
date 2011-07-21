@@ -41,19 +41,12 @@ int chipmunk_space_newindex(lua_State *vm){
 int chipmunk_space_index(lua_State *vm){
     cpSpace *space = (cpSpace *)lua_touserdata(vm, 1);
     const char *key = lua_tostring(vm, 2);
-    if (strcmp("Step", key) == 0){
-        lua_pushcfunction(vm, chipmunk_space_Step);
-        return 1;
-    }
-    else if (strcmp("AddBody", key) == 0){
-        lua_pushcfunction(vm, chipmunk_space_AddBody);
-        return 1;
-    }
-    else if (strcmp("gravity", key) == 0){
+    if (strcmp("gravity", key) == 0){
         chipmunk_cpVectToTable(cpSpaceGetGravity(space), vm);
         return 1;
     }
-    lua_pushnil(vm);
+    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.space:");
+    lua_getfield(vm, -1, key);
     return 1;
 }
 
