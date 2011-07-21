@@ -20,7 +20,7 @@
 #include <lunatic_chipmunk.h>
 
 int chipmunk_NewBody(lua_State *vm){
-    //mass, moi
+    //mass, moi -> body
     cpFloat m = INFINITY, moi = INFINITY;
     if (lua_isnumber(vm, 1)){
         m = lua_tonumber(vm, 1);
@@ -30,6 +30,15 @@ int chipmunk_NewBody(lua_State *vm){
     }
     cpBody *body = lua_newuserdata(vm, sizeof(cpBody));
     cpBodyInit(body, m, moi);
+    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
+    lua_setmetatable(vm, -2);
+    return 1;
+}
+
+int chipmunk_NewStaticBody(lua_State *vm){
+    //-> body
+    cpBody *body = lua_newuserdata(vm, sizeof(cpBody));
+    cpBodyInitStatic(body);
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
     lua_setmetatable(vm, -2);
     return 1;
