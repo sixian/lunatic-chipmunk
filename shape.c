@@ -21,11 +21,12 @@
 
 //-0, +1
 cpPolyShape *chipmunk_NewBoxShape(cpBody *body, cpFloat width, cpFloat height, lua_State *vm){
-    cpPolyShape *shape = lua_newuserdata(vm, sizeof(cpPolyShape));
-    cpBoxShapeInit(shape, body, width, height);
+    chipmunk_object *object_shape = lua_newuserdata(vm, sizeof(chipmunk_object));
+    object_shape->type = PolyShape;
+    object_shape->object = cpBoxShapeNew(body, width, height);
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
     lua_setmetatable(vm, -2);
-    return shape;
+    return object_shape->object;
 }
 
 int chipmunk_shape_newindex(lua_State *vm){
@@ -38,8 +39,8 @@ int chipmunk_shape_index(lua_State *vm){
 }
 
 int chipmunk_shape_gc(lua_State *vm){
-    cpShape *shape = lua_touserdata(vm, 1);
-    cpShapeDestroy(shape);
-    printf("Delete shape: %p\n", shape);
+    chipmunk_object *object_shape = lua_touserdata(vm, 1);
+    printf("Delete shape: %p\n", object_shape);
+    cpShapeFree((cpShape *)object_shape->object);
     return 0;
 }
