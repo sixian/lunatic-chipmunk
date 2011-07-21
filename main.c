@@ -83,4 +83,13 @@ int luaopen_chipmunk(lua_State *vm){
     luaL_register(vm, NULL, bodymeta);
     lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
     
+    luaL_Reg shapemeta[] = {
+    {"__newindex", chipmunk_shape_newindex},
+    {"__index", chipmunk_shape_index},
+    {"__gc", chipmunk_shape_gc},
+    {NULL, NULL}};
+    lua_createtable(vm, 0, 3);
+    luaL_register(vm, NULL, shapemeta);
+    lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
+    
 }

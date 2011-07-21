@@ -17,38 +17,29 @@
 //ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
 //OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef _lunatic_chipmunk_
-#define _lunatic_chipmunk_
+#include <lunatic_chipmunk.h>
 
-#include <lua5.1/lua.h>
-#include <lua5.1/lauxlib.h>
-#include <chipmunk/chipmunk.h>
+//-0, +1
+cpShape *chipmunk_NewBoxShape(cpBpdy *body, cpFloat width, cpFloat height, lua_State *vm){
+    cpShape *shape = lua_newuserdata(vm, sizeof(cpShape));
+    cpBoxShapeInit(shape, body, width, height);
+    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
+    lua_setmetatable(vm, -2);
+    return shape;
+}
 
-void chipmunk_cpVectToTable(cpVect vector, lua_State *vm);//-0,+1
-cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm);//-0,+0
+int chipmunk_shape_newindex(lua_State *vm){
+    return 0;
+}
 
-int luaopen_chipmunk(lua_State *);
+int chipmunk_shape_index(lua_State *vm){
+    lua_pushnil(vm);
+    return 1;
+}
 
-//space
-int chipmunk_NewSpace(lua_State *);
-int chipmunk_space_newindex(lua_State *);
-int chipmunk_space_index(lua_State *);
-int chipmunk_space_gc(lua_State *);
-int chipmunk_space_Step(lua_State *);
-int chipmunk_space_AddBody(lua_State *);
-
-//body
-int chipmunk_NewBody(lua_State *);
-int chipmunk_body_newindex(lua_State *);
-int chipmunk_body_index(lua_State *);
-int chipmunk_body_gc(lua_State *);
-int chipmunk_body_NewBoxShape(lua_State *);
-
-//Shape
-//Shapes are created with the a space's body or with a body.
-cpShape *chipmunk_NewBoxShape(cpBody *, cpFloat, cpFloat, lua_State *);//-0, +1
-int chipmunk_shape_newindex(lua_State *);
-int chipmunk_shape_index(lua_State *);
-int chipmunk_shape_gc(lua_State *);
-
-#endif
+int chipmunk_space_gc(lua_State *vm){
+    cpShape *shape = lua_touserdata(vm, 1);
+    cpShapeDestroy(shape);
+    printf("\nDelete shape: %p", shape):
+    return 0;
+}
