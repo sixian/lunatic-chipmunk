@@ -147,7 +147,8 @@ int chipmunk_MomentForCircle(lua_State *vm){
     m = lua_tonumber(vm, 1);
     radius1 = lua_tonumber(vm, 2);
     radius2 = lua_tonumber(vm, 3);
-    offset = chipmunk_TableTocpVect(3, vm);
+    if (lua_gettop(vm) > 3 && lua_istable(vm, 3)){
+        offset = chipmunk_TableTocpVect(3, vm);}
     lua_pushnumber(vm, cpMomentForCircle(m, radius1, radius2, offset));
     return 1;
 }
