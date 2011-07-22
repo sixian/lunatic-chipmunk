@@ -29,6 +29,16 @@ cpPolyShape *chipmunk_NewBoxShape(cpBody *body, cpFloat width, cpFloat height, l
     return object_shape->object;
 }
 
+//-0, +1
+cpCircleShape *chipmunk_NewCircleShape(cpBody *body, cpFloat radius, cpVect offset, lua_State *vm){
+    chipmunk_object *object_shape = lua_newuserdata(vm, sizeof(chipmunk_object));
+    object_shape->type = CircleShape;
+    object_shape->object = cpCircleShapeNew(body, radius, offset);
+    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
+    lua_setmetatable(vm, -2);
+    return object_shape->object;
+}
+
 int chipmunk_shape_newindex(lua_State *vm){
     return 0;
 }

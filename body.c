@@ -86,22 +86,47 @@ int chipmunk_body_NewBoxShape(lua_State *vm){
     //body, with, height -> shape (box)
     chipmunk_object *object_body = lua_touserdata(vm, 1);
     if (object_body == NULL || object_body->type != Body){
-        printf("%p hasn't :NewBoxShape()\n", object_body->object);
-        lua_pushnil(vm);
-        return 1;
+        printf("%p hasn't :NewBoxShape()\n", object_body);
+        RETURN_NIL;
     }
     cpFloat width = 0, height = 0;
     width = lua_tonumber(vm, 2);
     height = lua_tonumber(vm, 3);
     if (width <= 0){
-        printf("body:NewBoxShape -> width must be greater than 0.");
+        printf("body:NewBoxShape() -> width must be greater than 0.");
         RETURN_NIL;
     }
     if (height <= 0){
-        printf("body:NewBoxShape -> height must be greater than 0.");
+        printf("body:NewBoxShape() -> height must be greater than 0.");
         RETURN_NIL;
     }
     chipmunk_NewBoxShape((cpBody *)object_body->object, width, height, vm);
+    return 1;
+}
+
+int chipmunk_body_NewCircleShape(lua_State *vm){
+    //body, radius, {offset}
+    chipmunk_object *object_body = lua_touserdata(vm, 1);
+    if (object_body == NULL || object_body->type != Body){
+        printf("%p hasn't :NewCircleShape()\n", object_body);
+        lua_pushnil(vm);
+        return 1;
+    }
+    cpFloat radius = 0.f;
+    if (lua_isnumber(vm, 2)){
+        printf("body:NewCircleShape() -> 2nd argument must be a valid number");
+        RETURN_NIL;
+    }
+    radius = lua_tonumber(vm, 2);
+    if (radius <= 0){
+        printf("body:NewCircleShape() -> radius must be greather than 0.");
+        RETURN_NIL;
+    }
+    cpVect offset = cpvzero;
+    if (lua_gettop(vm) > 2 && lua_istable(vm, 3)){
+        offset = chipmunk_TableTocpVect(3, vm);
+    }
+    chipmunk_NewCircleShape((cpBody *)object_body->object, radius, offset, vm);
     return 1;
 }
 

@@ -89,6 +89,7 @@ int luaopen_chipmunk(lua_State *vm){
     
     luaL_Reg bodymethods[] = {
     {"NewBoxShape", chipmunk_body_NewBoxShape},
+    {"NewCircleShape", chipmunk_body_NewCircleShape},
     {NULL, NULL}};
     lua_createtable(vm, 0, 1);
     luaL_register(vm, NULL, bodymethods);
