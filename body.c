@@ -113,7 +113,7 @@ int chipmunk_body_NewCircleShape(lua_State *vm){
         return 1;
     }
     cpFloat radius = 0.f;
-    if (lua_isnumber(vm, 2)){
+    if (!lua_isnumber(vm, 2)){
         printf("body:NewCircleShape() -> 2nd argument must be a valid number");
         RETURN_NIL;
     }
