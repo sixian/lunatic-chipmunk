@@ -54,6 +54,7 @@ int luaopen_chipmunk(lua_State *vm){
     {"NewBody", chipmunk_NewBody},
     {"NewStaticBody", chipmunk_NewStaticBody},
     {"MomentForBox", chipmunk_MomentForBox},
+    {"MomentForCircle", chipmunk_MomentForCircle},
     {NULL, NULL}};
     
     luaL_register(vm, "chipmunk", functions);

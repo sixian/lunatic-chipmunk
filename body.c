@@ -131,11 +131,23 @@ int chipmunk_body_NewCircleShape(lua_State *vm){
 }
 
 int chipmunk_MomentForBox(lua_State *vm){
-    //m, width, height
+    //m, width, height -> number
     cpFloat m = 0, width = 0, height = 0;
     m = lua_tonumber(vm, 1);
     width = lua_tonumber(vm, 2);
     height = lua_tonumber(vm, 3);
     lua_pushnumber(vm, cpMomentForBox(m, width, height));
+    return 1;
+}
+
+int chipmunk_MomentForCircle(lua_State *vm){
+    //m, radius1, radius2, offset {x, y} -> number
+    cpFloat m = 0, radius1 = 0, radius2 = 0;
+    cpVect offset = cpvzero;
+    m = lua_tonumber(vm, 1);
+    radius1 = lua_tonumber(vm, 2);
+    radius2 = lua_tonumber(vm, 3);
+    offset = chipmunk_TableTocpVect(3, vm);
+    lua_pushnumber(vm, cpMomentForCircle(m, radius1, radius2, offset));
     return 1;
 }

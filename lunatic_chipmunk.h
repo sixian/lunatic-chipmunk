@@ -64,6 +64,7 @@ int chipmunk_body_NewBoxShape(lua_State *);
 int chipmunk_body_NewCircleShape(lua_State *);
 
 int chipmunk_MomentForBox(lua_State *);
+int chipmunk_MomentForCircle(lua_State *);
 
 //Shape
 //Shapes are created with the a space's body or with a body.
