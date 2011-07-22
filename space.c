@@ -95,7 +95,7 @@ int chipmunk_space_AddShape(lua_State *vm){
         return 0;
     }
     chipmunk_object *object_shape = (chipmunk_object *)lua_touserdata(vm, 2);
-    if (object_shape == NULL || object_shape->type != PolyShape || object_shape->type != PolyShape){
+    if (object_shape == NULL || object_shape->type != PolyShape || object_shape->type != CircleShape){
         printf("space:AddShape(): Can't add a shape\n");
         return 0;
     }
