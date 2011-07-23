@@ -36,7 +36,8 @@ typedef enum __chipmunk_type{
     Body,
     StaticBody,
     PolyShape,
-    CircleShape
+    CircleShape,
+    SegmentShape
 }chipmunk_type;
 
 typedef struct __chipmunk_object{
@@ -52,7 +53,7 @@ int chipmunk_space_gc(lua_State *);
 int chipmunk_space_Step(lua_State *);
 int chipmunk_space_AddBody(lua_State *);
 int chipmunk_space_AddShape(lua_State *);
-int chipmunk_space_NewBoxShape(lua_State *);
+int chipmunk_space_NewSegmentShape(lua_State *);
 
 //body
 int chipmunk_NewBody(lua_State *);
@@ -70,6 +71,7 @@ int chipmunk_MomentForCircle(lua_State *);
 //Shapes are created with the a space's body or with a body.
 cpPolyShape *chipmunk_NewBoxShape(cpBody *, cpFloat, cpFloat, lua_State *);//-0, +1
 cpCircleShape *chipmunk_NewCircleShape(cpBody *, cpFloat, cpVect, lua_State *);//-0, +1
+cpSegmentShape *chipmunk_NewSegmentShape(cpBody *, cpVect, cpVect, cpFloat, lua_State *);//-0, +1
 int chipmunk_shape_newindex(lua_State *);
 int chipmunk_shape_index(lua_State *);
 int chipmunk_shape_gc(lua_State *);

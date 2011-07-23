@@ -39,6 +39,16 @@ cpCircleShape *chipmunk_NewCircleShape(cpBody *body, cpFloat radius, cpVect offs
     return object_shape->object;
 }
 
+//-0, +1
+cpSegmentShape *chipmunk_NewSegmentShape(cpBody *body, cpVect a, cpVect b, cpFloat radius, lua_State *vm){
+    chipmunk_object *object_shape = lua_newuserdata(vm, sizeof(chipmunk_object));
+    object_shape->type = SegmentShape;
+    object_shape->object = cpSegmentShapeNew(body, a, b, radius);
+    lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
+    lua_setmetatable(vm, -2);
+    return object_shape->object;
+}
+
 int chipmunk_shape_newindex(lua_State *vm){
     return 0;
 }

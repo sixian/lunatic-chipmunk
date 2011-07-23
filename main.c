@@ -73,7 +73,7 @@ int luaopen_chipmunk(lua_State *vm){
     {"Step", chipmunk_space_Step},
     {"AddBody", chipmunk_space_AddBody},
     {"AddShape", chipmunk_space_AddShape},
-    {"NewBoxShape", chipmunk_space_NewBoxShape},
+    {"NewSegmentShape", chipmunk_space_NewSegmentShape},
     {NULL, NULL}};
     lua_createtable(vm, 0, 2);
     luaL_register(vm, NULL, spacemethods);

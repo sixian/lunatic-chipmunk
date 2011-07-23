@@ -103,24 +103,30 @@ int chipmunk_space_AddShape(lua_State *vm){
     return 0;
 }
 
-int chipmunk_space_NewBoxShape(lua_State *vm){
-    //space, width, height -> shape
+int chipmunk_space_NewSegmentShape(lua_State *vm){
+    //space, cpVect1 {x, y}, cpVect2 {x, y}, cpFloat -> shape
     chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
     if (object_space == NULL || object_space->type != Space){
-        printf("chipmunk: Object can't call :NewBoxShape\n");
+        printf("chipmunk: Object can't call :NewSegmentShape\n");
         return 0;
     }
-    cpFloat width = 0, height = 0;
-    width = lua_tonumber(vm, 2);
-    height = lua_tonumber(vm, 3);
-    if (width <= 0){
-        printf("space:NewBoxShape -> width must be greater than 0.");
+    cpVect a = cpvzero, b = cpvzero;
+    cpFloat thickness = 0;
+    if (!lua_istable(vm, 2)){
+        printf("space:NewSegmentShape() -> 1st parameter must be a table.");
         RETURN_NIL;
     }
-    if (height <= 0){
-        printf("space:NewBoxShape -> height must be greater than 0.");
+    a = chipmunk_TableTocpVect(2, vm);
+    if (!lua_istable(vm, 3)){
+        printf("space:NewSegmentShape() -> 2nd parameter must be a table.");
         RETURN_NIL;
     }
-    chipmunk_NewBoxShape(cpSpaceGetStaticBody((cpSpace *)object_space->object), width, height, vm);
+    b = chipmunk_TableTocpVect(3, vm);
+    if (!lua_isnumber(vm, 4)){
+        printf("space:NewSegmentShape() -> 2hd parameter must be a valid number.");
+        RETURN_NIL;
+    }
+    thickness = lua_tonumber(vm, 4);
+    chipmunk_NewSegmentShape(cpSpaceGetStaticBody((cpSpace *)object_space->object), a, b, thickness, vm);
     return 1;
 }
