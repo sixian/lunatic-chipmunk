@@ -87,6 +87,22 @@ int chipmunk_space_AddBody(lua_State *vm){
     return 0;
 }
 
+int chipmunk_space_RemoveBody(lua_State *vm){
+    //space, body
+    chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
+    if (object_space == NULL || object_space->type != Space){
+        printf("chipmunk: Object can't call :RemoveBody\n");
+        return 0;
+    }
+    chipmunk_object *object_body = (chipmunk_object *)lua_touserdata(vm, 2);
+    if (object_body == NULL || object_body->type != Body){
+        printf("space:RemoveBody(): Can't remove a body\n");
+        return 0;
+    }
+    cpSpaceRemoveBody((cpSpace *)object_space->object, (cpBody *)object_body->object);
+    return 0;
+}
+
 int chipmunk_space_AddShape(lua_State *vm){
     //space, shape
     chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
@@ -100,6 +116,22 @@ int chipmunk_space_AddShape(lua_State *vm){
         return 0;
     }
     cpSpaceAddShape((cpSpace *)object_space->object, (cpShape *)object_shape->object);
+    return 0;
+}
+
+int chipmunk_space_RemoveShape(lua_State *vm){
+    //space, shape
+    chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
+    if (object_space == NULL || object_space->type != Space){
+        printf("chipmunk: Object can't call :RemoveShape\n");
+        return 0;
+    }
+    chipmunk_object *object_shape = (chipmunk_object *)lua_touserdata(vm, 2);
+    if (object_shape == NULL || object_shape->type == Body || object_shape->type == Space){
+        printf("space:AddShape(): Can't remove a shape\n");
+        return 0;
+    }
+    cpSpaceRemoveShape((cpSpace *)object_space->object, (cpShape *)object_shape->object);
     return 0;
 }
 

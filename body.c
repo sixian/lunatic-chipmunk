@@ -30,6 +30,7 @@ int chipmunk_NewBody(lua_State *vm){
     }
     chipmunk_object *object_body = lua_newuserdata(vm, sizeof(chipmunk_object));
     object_body->type = Body;
+    printf("\nMoi %g", moi);
     object_body->object = cpBodyNew(m, moi);
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
     lua_setmetatable(vm, -2);
@@ -47,6 +48,7 @@ int chipmunk_NewStaticBody(lua_State *vm){
 }
 
 int chipmunk_body_newindex(lua_State *vm){
+    //userdata, key, data
     const char *key = lua_tostring(vm, 2);
     chipmunk_object *object_body = lua_touserdata(vm, 1);
     cpBody *body = object_body->object;
@@ -56,10 +58,14 @@ int chipmunk_body_newindex(lua_State *vm){
     else if (strcmp("vel", key) == 0 && lua_istable(vm, 3)){
         cpBodySetVel(body, chipmunk_TableTocpVect(3, vm));
     }
+    else if (strcmp("radangle", key) == 0){
+        cpBodySetAngle(body, (cpFloat)lua_tonumber(vm, 3));
+    }
     return 0;
 }
 
 int chipmunk_body_index(lua_State *vm){
+    //userdata, key
     const char *key = lua_tostring(vm, 2);
     chipmunk_object *object_body = lua_touserdata(vm, 1);
     cpBody *body = object_body->object;
@@ -69,6 +75,10 @@ int chipmunk_body_index(lua_State *vm){
     }
     else if (strcmp("vel", key) == 0){
         chipmunk_cpVectToTable(cpBodyGetVel(body), vm);
+        return 1;
+    }
+    else if (strcmp("radangle", key) == 0){
+        lua_pushnumber(vm, (lua_Number)cpBodyGetAngle(body));
         return 1;
     }
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.body:");

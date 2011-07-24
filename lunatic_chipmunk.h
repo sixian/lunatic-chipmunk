@@ -52,7 +52,9 @@ int chipmunk_space_index(lua_State *);
 int chipmunk_space_gc(lua_State *);
 int chipmunk_space_Step(lua_State *);
 int chipmunk_space_AddBody(lua_State *);
+int chipmunk_space_RemoveBody(lua_State *);
 int chipmunk_space_AddShape(lua_State *);
+int chipmunk_space_RemoveShape(lua_State *);
 int chipmunk_space_NewSegmentShape(lua_State *);
 
 //body
