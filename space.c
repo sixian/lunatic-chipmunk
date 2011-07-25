@@ -38,6 +38,9 @@ int chipmunk_space_newindex(lua_State *vm){
     if (strcmp("gravity", key) == 0 && lua_istable(vm, 3)){
         cpSpaceSetGravity(space, chipmunk_TableTocpVect(3, vm));
     }
+    else if (strcmp("iterations", key) == 0){
+        cpSpaceSetIterations(space, (cpFloat)lua_tonumber(vm, 3));
+    }
     return 0;
 }
 
@@ -47,6 +50,10 @@ int chipmunk_space_index(lua_State *vm){
     const char *key = lua_tostring(vm, 2);
     if (strcmp("gravity", key) == 0){
         chipmunk_cpVectToTable(cpSpaceGetGravity(space), vm);
+        return 1;
+    }
+    else if (strcmp("iterations", key) == 0){
+        lua_pushnumber(vm, (lua_Number)cpSpaceGetIterations(space));
         return 1;
     }
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.space:");
