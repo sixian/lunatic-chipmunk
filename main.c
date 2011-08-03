@@ -19,7 +19,7 @@
 
 #include <lunatic_chipmunk.h>
 
-void chipmunk_cpVectToTable(cpVect vector, lua_State *vm){
+void lc_cpVectToTable(cpVect vector, lua_State *vm){
     lua_createtable(vm, 0, 2);
     lua_pushnumber(vm, vector.x);
     lua_setfield(vm, -2, "x");
@@ -28,7 +28,7 @@ void chipmunk_cpVectToTable(cpVect vector, lua_State *vm){
     //+1
 }
 
-cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm){
+cpVect lc_TableTocpVect(int indextable, lua_State *vm){
     cpVect vector = cpvzero;
     lua_getfield(vm, indextable, "x");
     if (lua_isnil(vm, -1)){
@@ -50,58 +50,58 @@ cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm){
 int luaopen_chipmunk(lua_State *vm){
     printf("\nInit chipmunk\n");
     luaL_Reg functions[] = {
-    {"NewSpace", chipmunk_NewSpace},
-    {"NewBody", chipmunk_NewBody},
-    {"NewStaticBody", chipmunk_NewStaticBody},
-    {"MomentForBox", chipmunk_MomentForBox},
-    {"MomentForCircle", chipmunk_MomentForCircle},
+    {"NewSpace", lc_NewSpace},
+    {"NewBody", lc_NewBody},
+    {"NewStaticBody", lc_NewStaticBody},
+    {"MomentForBox", lc_MomentForBox},
+    {"MomentForCircle", lc_MomentForCircle},
     {NULL, NULL}};
     
     luaL_register(vm, "chipmunk", functions);
     lua_pop(vm, 1);
     
     luaL_Reg spacemeta[] = {
-    {"__newindex", chipmunk_space_newindex},
-    {"__index", chipmunk_space_index},
-    {"__gc", chipmunk_space_gc},
+    {"__newindex", lc_space_newindex},
+    {"__index", lc_space_index},
+    {"__gc", lc_space_gc},
     {NULL, NULL}};
     lua_createtable(vm, 0, 3);
     luaL_register(vm, NULL, spacemeta);
     lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.spacemeta");
     
     luaL_Reg spacemethods[] = {
-    {"Step", chipmunk_space_Step},
-    {"AddBody", chipmunk_space_AddBody},
-    {"RemoveBody", chipmunk_space_RemoveBody},
-    {"AddShape", chipmunk_space_AddShape},
-    {"RemoveShape", chipmunk_space_RemoveShape},
-    {"NewSegmentShape", chipmunk_space_NewSegmentShape},
+    {"Step", lc_space_Step},
+    {"AddBody", lc_space_AddBody},
+    {"RemoveBody", lc_space_RemoveBody},
+    {"AddShape", lc_space_AddShape},
+    {"RemoveShape", lc_space_RemoveShape},
+    {"NewSegmentShape", lc_space_NewSegmentShape},
     {NULL, NULL}};
     lua_createtable(vm, 0, 2);
     luaL_register(vm, NULL, spacemethods);
     lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.space:");
     
     luaL_Reg bodymeta[] = {
-    {"__newindex", chipmunk_body_newindex},
-    {"__index", chipmunk_body_index},
-    {"__gc", chipmunk_body_gc},
+    {"__newindex", lc_body_newindex},
+    {"__index", lc_body_index},
+    {"__gc", lc_body_gc},
     {NULL, NULL}};
     lua_createtable(vm, 0, 3);
     luaL_register(vm, NULL, bodymeta);
     lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
     
     luaL_Reg bodymethods[] = {
-    {"NewBoxShape", chipmunk_body_NewBoxShape},
-    {"NewCircleShape", chipmunk_body_NewCircleShape},
+    {"NewBoxShape", lc_body_NewBoxShape},
+    {"NewCircleShape", lc_body_NewCircleShape},
     {NULL, NULL}};
     lua_createtable(vm, 0, 1);
     luaL_register(vm, NULL, bodymethods);
     lua_setfield(vm, LUA_REGISTRYINDEX, "chipmunk.body:");
     
     luaL_Reg shapemeta[] = {
-    {"__newindex", chipmunk_shape_newindex},
-    {"__index", chipmunk_shape_index},
-    {"__gc", chipmunk_shape_gc},
+    {"__newindex", lc_shape_newindex},
+    {"__index", lc_shape_index},
+    {"__gc", lc_shape_gc},
     {NULL, NULL}};
     lua_createtable(vm, 0, 3);
     luaL_register(vm, NULL, shapemeta);

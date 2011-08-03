@@ -20,7 +20,7 @@
 #include <math.h>
 #include <lunatic_chipmunk.h>
 
-int chipmunk_NewBody(lua_State *vm){
+int lc_NewBody(lua_State *vm){
     //mass, moi -> body
     cpFloat m = INFINITY, moi = INFINITY;
     if (lua_isnumber(vm, 1)){
@@ -37,7 +37,7 @@ int chipmunk_NewBody(lua_State *vm){
     return 1;
 }
 
-int chipmunk_NewStaticBody(lua_State *vm){
+int lc_NewStaticBody(lua_State *vm){
     //-> body
     chipmunk_object *object_body = lua_newuserdata(vm, sizeof(chipmunk_object));
     object_body->type = Body;
@@ -47,7 +47,7 @@ int chipmunk_NewStaticBody(lua_State *vm){
     return 1;
 }
 
-int chipmunk_body_newindex(lua_State *vm){
+int lc_body_newindex(lua_State *vm){
     //userdata, key, data
     const char *key = lua_tostring(vm, 2);
     chipmunk_object *object_body = lua_touserdata(vm, 1);
@@ -67,7 +67,7 @@ int chipmunk_body_newindex(lua_State *vm){
     return 0;
 }
 
-int chipmunk_body_index(lua_State *vm){
+int lc_body_index(lua_State *vm){
     //userdata, key
     const char *key = lua_tostring(vm, 2);
     chipmunk_object *object_body = lua_touserdata(vm, 1);
@@ -93,13 +93,13 @@ int chipmunk_body_index(lua_State *vm){
     return 1;
 }
 
-int chipmunk_body_gc(lua_State *vm){
+int lc_body_gc(lua_State *vm){
     chipmunk_object *object_body = lua_touserdata(vm, 1);
     cpBodyFree(object_body->object);
     printf("Delete body: %p\n", object_body);
 }
 
-int chipmunk_body_NewBoxShape(lua_State *vm){
+int lc_body_NewBoxShape(lua_State *vm){
     //body, with, height -> shape (box)
     chipmunk_object *object_body = lua_touserdata(vm, 1);
     if (object_body == NULL || object_body->type != Body){
@@ -121,7 +121,7 @@ int chipmunk_body_NewBoxShape(lua_State *vm){
     return 1;
 }
 
-int chipmunk_body_NewCircleShape(lua_State *vm){
+int lc_body_NewCircleShape(lua_State *vm){
     //body, radius, {offset}
     chipmunk_object *object_body = lua_touserdata(vm, 1);
     if (object_body == NULL || object_body->type != Body){
@@ -147,7 +147,7 @@ int chipmunk_body_NewCircleShape(lua_State *vm){
     return 1;
 }
 
-int chipmunk_MomentForBox(lua_State *vm){
+int lc_MomentForBox(lua_State *vm){
     //m, width, height -> number
     cpFloat m = 0, width = 0, height = 0;
     m = lua_tonumber(vm, 1);
@@ -157,7 +157,7 @@ int chipmunk_MomentForBox(lua_State *vm){
     return 1;
 }
 
-int chipmunk_MomentForCircle(lua_State *vm){
+int lc_MomentForCircle(lua_State *vm){
     //m, radius1, radius2, offset {x, y} -> number
     cpFloat m = 0, radius1 = 0, radius2 = 0;
     cpVect offset = cpvzero;

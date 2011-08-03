@@ -26,56 +26,91 @@
 
 #define RETURN_NIL lua_pushnil(vm);return 1;
 
-void chipmunk_cpVectToTable(cpVect vector, lua_State *vm);//-0,+1
-cpVect chipmunk_TableTocpVect(int indextable, lua_State *vm);//-0,+0
+void lc_cpVectToTable(cpVect vector, lua_State *vm);//-0,+1
+cpVect lc_TableTocpVect(int indextable, lua_State *vm);//-0,+0
 
 int luaopen_chipmunk(lua_State *);
 
-typedef enum __chipmunk_type{
+typedef enum __lc_type{
     Space,
     Body,
     StaticBody,
     PolyShape,
     CircleShape,
     SegmentShape
-}chipmunk_type;
+}lc_type;
 
-typedef struct __chipmunk_object{
+typedef struct __lc_object{
     chipmunk_type type;
     void *object;
-}chipmunk_object;
+}lc_object;
 
 //space
-int chipmunk_NewSpace(lua_State *);
-int chipmunk_space_newindex(lua_State *);
-int chipmunk_space_index(lua_State *);
-int chipmunk_space_gc(lua_State *);
-int chipmunk_space_Step(lua_State *);
-int chipmunk_space_AddBody(lua_State *);
-int chipmunk_space_RemoveBody(lua_State *);
-int chipmunk_space_AddShape(lua_State *);
-int chipmunk_space_RemoveShape(lua_State *);
-int chipmunk_space_NewSegmentShape(lua_State *);
+
+typedef struct __lc_space{
+    cpSpace *space;
+    int bodies;//table with bodies
+    int shapes;//table with shapes
+}lc_space;
+
+int lc_NewSpace(lua_State *);
+int lc_space_newindex(lua_State *);
+int lc_space_index(lua_State *);
+int lc_space_gc(lua_State *);
+int lc_space_Step(lua_State *);
+int lc_space_AddBody(lua_State *);
+int lc_space_RemoveBody(lua_State *);
+int lc_space_AddShape(lua_State *);
+int lc_space_RemoveShape(lua_State *);
+int lc_space_NewSegmentShape(lua_State *);
+
+inline lc_space *lc_GetSpace(int indexspace, lua_State *vm){
+    chipmunk_object *object = (chipmunk_object *)lua_touserdata(vm, indexspace);
+    if (object == NULL || object->type != Space){
+        return NULL;}
+    return (lc_space *)object->object;
+}
 
 //body
-int chipmunk_NewBody(lua_State *);
-int chipmunk_NewStaticBody(lua_State *);
-int chipmunk_body_newindex(lua_State *);
-int chipmunk_body_index(lua_State *);
-int chipmunk_body_gc(lua_State *);
-int chipmunk_body_NewBoxShape(lua_State *);
-int chipmunk_body_NewCircleShape(lua_State *);
 
-int chipmunk_MomentForBox(lua_State *);
-int chipmunk_MomentForCircle(lua_State *);
+typedef struct __lc_body{
+    cpBody *body;
+    int shapes;//
+    int space;//ref to space
+}lc_body;
+
+inline lc_body *lc_GetBody(int indexbody, lua_State *vm){
+    chipmunk_object *object = (chipmunk_object *)lua_touserdata(vm, indexspace);
+    if (object == NULL || object->type != Body){
+        return NULL;}
+    return (lc_body *)object->object;
+}
+
+int lc_NewBody(lua_State *);
+int lc_NewStaticBody(lua_State *);
+int lc_body_newindex(lua_State *);
+int lc_body_index(lua_State *);
+int lc_body_gc(lua_State *);
+int lc_body_NewBoxShape(lua_State *);
+int lc_body_NewCircleShape(lua_State *);
+
+int lc_MomentForBox(lua_State *);
+int lc_MomentForCircle(lua_State *);
 
 //Shape
+
+typedef struct __lc_shape{
+    cpShape *shape;
+    int body;//ref to body
+    int space;//ref to space
+}lc_shape;
+
 //Shapes are created with the a space's body or with a body.
-cpPolyShape *chipmunk_NewBoxShape(cpBody *, cpFloat, cpFloat, lua_State *);//-0, +1
-cpCircleShape *chipmunk_NewCircleShape(cpBody *, cpFloat, cpVect, lua_State *);//-0, +1
-cpSegmentShape *chipmunk_NewSegmentShape(cpBody *, cpVect, cpVect, cpFloat, lua_State *);//-0, +1
-int chipmunk_shape_newindex(lua_State *);
-int chipmunk_shape_index(lua_State *);
-int chipmunk_shape_gc(lua_State *);
+cpPolyShape *lc_NewBoxShape(cpBody *, cpFloat, cpFloat, lua_State *);//-0, +1
+cpCircleShape *lc_NewCircleShape(cpBody *, cpFloat, cpVect, lua_State *);//-0, +1
+cpSegmentShape *lc_NewSegmentShape(cpBody *, cpVect, cpVect, cpFloat, lua_State *);//-0, +1
+int lc_shape_newindex(lua_State *);
+int lc_shape_index(lua_State *);
+int lc_shape_gc(lua_State *);
 
 #endif
