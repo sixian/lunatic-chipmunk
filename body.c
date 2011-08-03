@@ -29,9 +29,14 @@ int lc_NewBody(lua_State *vm){
     if (lua_isnumber(vm, 2)){
         moi = lua_tonumber(vm, 2);
     }
-    chipmunk_object *object_body = lua_newuserdata(vm, sizeof(chipmunk_object));
+    lc_object *object_body = lua_newuserdata(vm, sizeof(lc_object));
+    lc_body *body = malloc(sizeof(lc_body));
+    body->body = cpBodyNew(m, moi);
+    lua_newtable(vm);
+    luaL_ref(vm, LUA_REGISTRYINDEX);
+    body->space = LUA_REFNIL;
     object_body->type = Body;
-    object_body->object = cpBodyNew(m, moi);
+    object_body->object = body;
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
     lua_setmetatable(vm, -2);
     return 1;
@@ -50,8 +55,7 @@ int lc_NewStaticBody(lua_State *vm){
 int lc_body_newindex(lua_State *vm){
     //userdata, key, data
     const char *key = lua_tostring(vm, 2);
-    chipmunk_object *object_body = lua_touserdata(vm, 1);
-    cpBody *body = object_body->object;
+    cpBody *body = (lc_GetBody(1, vm))->body;
     if (strcmp("pos", key) == 0 && lua_istable(vm, 3)){
         cpBodySetPos(body, chipmunk_TableTocpVect(3, vm));
     }
@@ -70,8 +74,7 @@ int lc_body_newindex(lua_State *vm){
 int lc_body_index(lua_State *vm){
     //userdata, key
     const char *key = lua_tostring(vm, 2);
-    chipmunk_object *object_body = lua_touserdata(vm, 1);
-    cpBody *body = object_body->object;
+    cpBody *body = (lc_GetBody(1, vm))->body;
     if (strcmp("pos", key) == 0){
         chipmunk_cpVectToTable(cpBodyGetPos(body), vm);
         return 1;
@@ -94,8 +97,10 @@ int lc_body_index(lua_State *vm){
 }
 
 int lc_body_gc(lua_State *vm){
-    chipmunk_object *object_body = lua_touserdata(vm, 1);
-    cpBodyFree(object_body->object);
+    lc_body *body = lc_GetBody(1, vm);
+    cpBodyFree(body->body);
+    luaL_unref(vm, LUA_REGISTRYINDEX, body->space);
+    luaL_unref(vm, LUA_REGISTRYINDEX, body->shapes);
     printf("Delete body: %p\n", object_body);
 }
 
