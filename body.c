@@ -32,9 +32,6 @@ int lc_NewBody(lua_State *vm){
     lc_object *object_body = lua_newuserdata(vm, sizeof(lc_object));
     lc_body *body = malloc(sizeof(lc_body));
     body->body = cpBodyNew(m, moi);
-    lua_newtable(vm);
-    body->shapes = luaL_ref(vm, LUA_REGISTRYINDEX);
-    body->space = LUA_REFNIL;
     object_body->type = Body;
     object_body->object = body;
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
@@ -99,8 +96,6 @@ int lc_body_index(lua_State *vm){
 int lc_body_gc(lua_State *vm){
     lc_body *body = lc_GetBody(1, vm);
     cpBodyFree(body->body);
-    luaL_unref(vm, LUA_REGISTRYINDEX, body->space);
-    luaL_unref(vm, LUA_REGISTRYINDEX, body->shapes);
     free(body);
     printf("Delete body: %p\n", lua_touserdata(vm, 1));
 }

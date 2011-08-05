@@ -25,8 +25,7 @@ lc_shape *lc_NewBoxShape(cpBody *body, cpFloat width, cpFloat height, lua_State 
     lc_shape *shape = malloc(sizeof(lc_shape));
     object_shape->type = PolyShape;
     shape->shape = cpBoxShapeNew(body, width, height);
-    shape->space = LUA_REFNIL;
-    shape->body = LUA_REFNIL;
+    shape->bodyorspace = LUA_REFNIL;
     object_shape->object = shape;
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
     lua_setmetatable(vm, -2);
@@ -39,8 +38,7 @@ lc_shape *lc_NewCircleShape(cpBody *body, cpFloat radius, cpVect offset, lua_Sta
     lc_shape *shape = malloc(sizeof(lc_shape));
     object_shape->type = PolyShape;
     shape->shape = cpCircleShapeNew(body, radius, offset);
-    shape->space = LUA_REFNIL;
-    shape->body = LUA_REFNIL;
+    shape->bodyorspace = LUA_REFNIL;
     object_shape->object = shape;
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
     lua_setmetatable(vm, -2);
@@ -53,8 +51,7 @@ lc_shape *lc_NewSegmentShape(cpBody *body, cpVect a, cpVect b, cpFloat radius, l
     lc_shape *shape = malloc(sizeof(lc_shape));
     object_shape->type = PolyShape;
     shape->shape = cpSegmentShapeNew(body, a, b, radius);
-    shape->space = LUA_REFNIL;
-    shape->body = LUA_REFNIL;
+    shape->bodyorspace = LUA_REFNIL;
     object_shape->object = shape;
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
     lua_setmetatable(vm, -2);
