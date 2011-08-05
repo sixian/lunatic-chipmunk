@@ -120,7 +120,7 @@ int lc_body_NewBoxShape(lua_State *vm){
     }
     lc_shape *shape = lc_NewBoxShape(body->body, width, height, vm);
     lua_pushvalue(vm, 1);
-    shape->body = luaL_ref(vm, LUA_REGISTRYINDEX);
+    shape->bodyorspace = luaL_ref(vm, LUA_REGISTRYINDEX);
     return 1;
 }
 
@@ -148,7 +148,7 @@ int lc_body_NewCircleShape(lua_State *vm){
     }
     lc_shape *shape = lc_NewCircleShape(body->body, radius, offset, vm);
     lua_pushvalue(vm, 1);
-    shape->body = luaL_ref(vm, LUA_REGISTRYINDEX);
+    shape->bodyorspace = luaL_ref(vm, LUA_REGISTRYINDEX);
     return 1;
 }
 

@@ -221,6 +221,8 @@ int lc_space_NewSegmentShape(lua_State *vm){
         RETURN_NIL;
     }
     thickness = lua_tonumber(vm, 4);
-    chipmunk_NewSegmentShape(cpSpaceGetStaticBody((cpSpace *)object_space->object), a, b, thickness, vm);
+    lc_shape *shape = lc_NewSegmentShape(cpSpaceGetStaticBody((cpSpace *)object_space->object), a, b, thickness, vm);
+    lua_pushvalue(vm, 1);
+    shape->bodyorspace = luaL_ref(vm, LUA_REGISTRYINDEX);
     return 1;
 }
