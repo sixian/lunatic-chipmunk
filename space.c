@@ -66,10 +66,11 @@ int lc_space_index(lua_State *vm){
 }
 
 int lc_space_gc(lua_State *vm){
-    cpSpace *space = (lc_GetSpace(1, vm))->space;
-    cpSpaceFree(space);
+    lc_space *space = lc_GetSpace(1, vm);
+    cpSpaceFree(space->space);
     luaL_unref(vm, LUA_REGISTRYINDEX, space->bodies);
     luaL_unref(vm, LUA_REGISTRYINDEX, space->shapes);
+    free(space);
     printf("Delete space: %p\n", object_space);
 }
 

@@ -65,7 +65,7 @@ int lc_space_RemoveShape(lua_State *);
 int lc_space_NewSegmentShape(lua_State *);
 
 inline lc_space *lc_GetSpace(int indexspace, lua_State *vm){
-    chipmunk_object *object = (chipmunk_object *)lua_touserdata(vm, indexspace);
+    lc_object *object = (chipmunk_object *)lua_touserdata(vm, indexspace);
     if (object == NULL || object->type != Space){
         return NULL;}
     return (lc_space *)object->object;
@@ -80,7 +80,7 @@ typedef struct __lc_body{
 }lc_body;
 
 inline lc_body *lc_GetBody(int indexbody, lua_State *vm){
-    chipmunk_object *object = (chipmunk_object *)lua_touserdata(vm, indexspace);
+    lc_object *object = (chipmunk_object *)lua_touserdata(vm, indexspace);
     if (object == NULL || object->type != Body){
         return NULL;}
     return (lc_body *)object->object;
@@ -106,9 +106,17 @@ typedef struct __lc_shape{
 }lc_shape;
 
 //Shapes are created with the a space's body or with a body.
-cpPolyShape *lc_NewBoxShape(cpBody *, cpFloat, cpFloat, lua_State *);//-0, +1
-cpCircleShape *lc_NewCircleShape(cpBody *, cpFloat, cpVect, lua_State *);//-0, +1
-cpSegmentShape *lc_NewSegmentShape(cpBody *, cpVect, cpVect, cpFloat, lua_State *);//-0, +1
+lc_shape *lc_NewBoxShape(cpBody *, cpFloat, cpFloat, lua_State *);//-0, +1
+lc_shape *lc_NewCircleShape(cpBody *, cpFloat, cpVect, lua_State *);//-0, +1
+lc_shape *lc_NewSegmentShape(cpBody *, cpVect, cpVect, cpFloat, lua_State *);//-0, +1
+
+inline lc_shape *lc_GetShape(int indexshape, lua_State *vm){
+    lc_object *object = (chipmunk_object *)lua_touserdata(vm, indexshape);
+    if (object == NULL || object->type == Body || object->type == Space){
+        return NULL;}
+    return (lc_shape *)object->object;
+}
+
 int lc_shape_newindex(lua_State *);
 int lc_shape_index(lua_State *);
 int lc_shape_gc(lua_State *);

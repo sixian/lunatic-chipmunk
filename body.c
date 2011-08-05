@@ -33,7 +33,7 @@ int lc_NewBody(lua_State *vm){
     lc_body *body = malloc(sizeof(lc_body));
     body->body = cpBodyNew(m, moi);
     lua_newtable(vm);
-    luaL_ref(vm, LUA_REGISTRYINDEX);
+    body->shapes = luaL_ref(vm, LUA_REGISTRYINDEX);
     body->space = LUA_REFNIL;
     object_body->type = Body;
     object_body->object = body;
@@ -101,14 +101,15 @@ int lc_body_gc(lua_State *vm){
     cpBodyFree(body->body);
     luaL_unref(vm, LUA_REGISTRYINDEX, body->space);
     luaL_unref(vm, LUA_REGISTRYINDEX, body->shapes);
-    printf("Delete body: %p\n", object_body);
+    free(body);
+    printf("Delete body: %p\n", lua_touserdata(vm, 1));
 }
 
 int lc_body_NewBoxShape(lua_State *vm){
     //body, with, height -> shape (box)
-    chipmunk_object *object_body = lua_touserdata(vm, 1);
-    if (object_body == NULL || object_body->type != Body){
-        printf("%p hasn't :NewBoxShape()\n", object_body);
+    lc_object *body = lc_GetBody(1, vm);
+    if (body == NULL){
+        printf("%p hasn't :NewBoxShape()\n", body);
         RETURN_NIL;
     }
     cpFloat width = 0, height = 0;
@@ -122,15 +123,17 @@ int lc_body_NewBoxShape(lua_State *vm){
         printf("body:NewBoxShape() -> height must be greater than 0.");
         RETURN_NIL;
     }
-    chipmunk_NewBoxShape((cpBody *)object_body->object, width, height, vm);
+    lc_shape *shape = lc_NewBoxShape(body->body, width, height, vm);
+    lua_pushvalue(vm, 1);
+    shape->body = luaL_ref(vm, LUA_REGISTRYINDEX);
     return 1;
 }
 
 int lc_body_NewCircleShape(lua_State *vm){
     //body, radius, {offset}
-    chipmunk_object *object_body = lua_touserdata(vm, 1);
-    if (object_body == NULL || object_body->type != Body){
-        printf("%p hasn't :NewCircleShape()\n", object_body);
+    lc_object *body = lc_GetBody(1, vm);
+    if (body == NULL){
+        printf("%p hasn't :NewCircleShape()\n", body);
         lua_pushnil(vm);
         return 1;
     }
@@ -148,7 +151,9 @@ int lc_body_NewCircleShape(lua_State *vm){
     if (lua_gettop(vm) > 2 && lua_istable(vm, 3)){
         offset = chipmunk_TableTocpVect(3, vm);
     }
-    chipmunk_NewCircleShape((cpBody *)object_body->object, radius, offset, vm);
+    lc_shape *shape = lc_NewCircleShape(body->body, radius, offset, vm);
+    lua_pushvalue(vm, 1);
+    shape->body = luaL_ref(vm, LUA_REGISTRYINDEX);
     return 1;
 }
 
