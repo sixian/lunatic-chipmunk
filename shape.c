@@ -29,7 +29,7 @@ lc_shape *lc_NewBoxShape(cpBody *body, cpFloat width, cpFloat height, lua_State 
     object_shape->object = shape;
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
     lua_setmetatable(vm, -2);
-    return object_shape;
+    return shape;
 }
 
 //-0, +1
@@ -42,7 +42,7 @@ lc_shape *lc_NewCircleShape(cpBody *body, cpFloat radius, cpVect offset, lua_Sta
     object_shape->object = shape;
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
     lua_setmetatable(vm, -2);
-    return object_shape;
+    return shape;
 }
 
 //-0, +1
@@ -55,7 +55,7 @@ lc_shape *lc_NewSegmentShape(cpBody *body, cpVect a, cpVect b, cpFloat radius, l
     object_shape->object = shape;
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.shapemeta");
     lua_setmetatable(vm, -2);
-    return object_shape;
+    return shape;
 }
 
 int lc_shape_newindex(lua_State *vm){

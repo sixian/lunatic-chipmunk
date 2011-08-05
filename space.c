@@ -41,7 +41,7 @@ int lc_space_newindex(lua_State *vm){
     cpSpace *space = (lc_GetSpace(1, vm))->space;
     const char *key = lua_tostring(vm, 2);
     if (strcmp("gravity", key) == 0 && lua_istable(vm, 3)){
-        cpSpaceSetGravity(space, chipmunk_TableTocpVect(3, vm));
+        cpSpaceSetGravity(space, lc_TableTocpVect(3, vm));
     }
     else if (strcmp("iterations", key) == 0){
         cpSpaceSetIterations(space, (cpFloat)lua_tonumber(vm, 3));
@@ -71,13 +71,13 @@ int lc_space_gc(lua_State *vm){
     luaL_unref(vm, LUA_REGISTRYINDEX, space->bodies);
     luaL_unref(vm, LUA_REGISTRYINDEX, space->shapes);
     free(space);
-    printf("Delete space: %p\n", object_space);
+    printf("Delete space: %p\n", lua_touserdata(vm, 1));
 }
 
 int lc_space_Step(lua_State *vm){
     //space, number
     cpSpace *space = (lc_GetSpace(1, vm))->space;
-    if (object_space == NULL || object_space->type != Space){
+    if (space == NULL){
         printf("chipmunk: Object can't call :Step\n");
         return 0;
     }
@@ -97,19 +97,12 @@ int lc_space_AddBody(lua_State *vm){
         printf("space:AddBody(): Can't add a object that isn't a body.\n");
         return 0;
     }
-    
-    //Check if the body alreaddy has been added to a space
-    if (body->space != LUA_REFNIL){
-        printf("space:AddBody(): Body already added to a space. Remove the from it first.\n");
-        return 0;
-    }
-    //---
-    
-    char pbody[17] = {0};
-    snprintf(pbody, 17, "%p", body);
+        
+    char pbody[32] = {0};
+    snprintf(pbody, 32, "%p", body);
     
     //Check if the body exists in bodies table. If not exists then add to the table
-    lua_rawgeti(vm, LUA_REGISTRYINDEX, bodies);
+    lua_rawgeti(vm, LUA_REGISTRYINDEX, space->bodies);
     lua_getfield(vm, -1, pbody);
     if (!lua_isnil(vm, -1)){
         //The body already exists. Then return.
@@ -119,10 +112,6 @@ int lc_space_AddBody(lua_State *vm){
     lua_pushvalue(vm, 2);
     lua_setfield(vm, -2, pbody);
     lua_pop(vm, 1);//bodies table
-    //---
-    //Set a scene reference to the body
-    lua_pushvalue(vm, 1);
-    body->space = luaL_ref(vm, LUA_REGISTRYINDEX);
     //---
     
     cpSpaceAddBody(space->space, body->body);
@@ -142,11 +131,11 @@ int lc_space_RemoveBody(lua_State *vm){
         return 0;
     }
     
-    char pbody[17] = {0};
-    snprintf(pbody, 17, "%p", body);
+    char pbody[32] = {0};
+    snprintf(pbody, 32, "%p", body);
     
     //Check if the body has been added to the space for be removed.
-    lua_rawgeti(vm, LUA_REGISTRYINDEX, bodies);
+    lua_rawgeti(vm, LUA_REGISTRYINDEX, space->bodies);
     lua_getfield(vm, -1, pbody);
     if (lua_isnil(vm, -1)){
         //The body doesn't exists.
@@ -156,10 +145,6 @@ int lc_space_RemoveBody(lua_State *vm){
     lua_pushnil(vm);
     lua_setfield(vm, -2, pbody);
     //---
-    //Unref body space
-    luaL_unref(vm, LUA_REGISTRYINDEX, body->space);
-    body->space = LUA_REFNIL;
-    //
     
     cpSpaceRemoveBody(space->space, body->body);
     return 0;
@@ -172,35 +157,68 @@ int lc_space_AddShape(lua_State *vm){
         printf("chipmunk: Object can't call :AddShape\n");
         return 0;
     }
-    lc_shape *body = lc_GetBody(2, vm);
-    if (object_shape == NULL || object_shape->type == Body || object_shape->type == Space){
+    lc_shape *shape = lc_GetShape(2, vm);
+    if (shape == NULL){
         printf("space:AddShape(): Can't add a shape\n");
         return 0;
     }
-    cpSpaceAddShape((cpSpace *)object_space->object, (cpShape *)object_shape->object);
+    
+    char pshape[32] = {0};
+    snprintf(pshape, 32, "%p", shape);
+    
+    //If the shape doesn't exists in shapes table then add it
+    lua_rawgeti(vm, LUA_REGISTRYINDEX, space->shapes);
+    lua_getfield(vm, -1, pshape);
+    if (!lua_isnil(vm, -1)){
+        //The shape alreadye exists
+        return 0;
+    }
+    lua_pop(vm, 1);
+    lua_pushvalue(vm, 2);
+    lua_setfield(vm, -2, pshape);
+    lua_pop(vm, 1);//shapes table
+    //---
+    
+    cpSpaceAddShape(space->space, shape->shape);
     return 0;
 }
 
 int lc_space_RemoveShape(lua_State *vm){
     //space, shape
-    chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
-    if (object_space == NULL || object_space->type != Space){
+    lc_space *space = lc_GetSpace(1, vm);
+    if (space == NULL){
         printf("chipmunk: Object can't call :RemoveShape\n");
         return 0;
     }
-    chipmunk_object *object_shape = (chipmunk_object *)lua_touserdata(vm, 2);
-    if (object_shape == NULL || object_shape->type == Body || object_shape->type == Space){
+    lc_shape *shape = lc_GetShape(2, vm);
+    if (shape == NULL){
         printf("space:AddShape(): Can't remove a shape\n");
         return 0;
     }
-    cpSpaceRemoveShape((cpSpace *)object_space->object, (cpShape *)object_shape->object);
+    
+    char pshape[32] = {0};
+    snprintf(pshape, 32, "%p", shape);
+    
+    //Check if the body has been added to the space for be removed.
+    lua_rawgeti(vm, LUA_REGISTRYINDEX, space->shapes);
+    lua_getfield(vm, -1, pshape);
+    if (lua_isnil(vm, -1)){
+        //The body doesn't exists.
+        return 0;
+    }
+    lua_pop(vm, 1);
+    lua_pushnil(vm);
+    lua_setfield(vm, -2, pshape);
+    //---
+    
+    cpSpaceRemoveShape(space->space, shape->shape);
     return 0;
 }
 
 int lc_space_NewSegmentShape(lua_State *vm){
     //space, cpVect1 {x, y}, cpVect2 {x, y}, cpFloat -> shape
-    chipmunk_object *object_space = (chipmunk_object *)lua_touserdata(vm, 1);
-    if (object_space == NULL || object_space->type != Space){
+    lc_space *space = lc_GetSpace(1, vm);
+    if (space == NULL){
         printf("chipmunk: Object can't call :NewSegmentShape\n");
         return 0;
     }
@@ -210,18 +228,18 @@ int lc_space_NewSegmentShape(lua_State *vm){
         printf("space:NewSegmentShape() -> 1st parameter must be a table.");
         RETURN_NIL;
     }
-    a = chipmunk_TableTocpVect(2, vm);
+    a = lc_TableTocpVect(2, vm);
     if (!lua_istable(vm, 3)){
         printf("space:NewSegmentShape() -> 2nd parameter must be a table.");
         RETURN_NIL;
     }
-    b = chipmunk_TableTocpVect(3, vm);
+    b = lc_TableTocpVect(3, vm);
     if (!lua_isnumber(vm, 4)){
         printf("space:NewSegmentShape() -> 2hd parameter must be a valid number.");
         RETURN_NIL;
     }
     thickness = lua_tonumber(vm, 4);
-    lc_shape *shape = lc_NewSegmentShape(cpSpaceGetStaticBody((cpSpace *)object_space->object), a, b, thickness, vm);
+    lc_shape *shape = lc_NewSegmentShape(cpSpaceGetStaticBody(space->space), a, b, thickness, vm);
     lua_pushvalue(vm, 1);
     shape->bodyorspace = luaL_ref(vm, LUA_REGISTRYINDEX);
     return 1;

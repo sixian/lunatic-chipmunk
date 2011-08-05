@@ -41,7 +41,7 @@ int lc_NewBody(lua_State *vm){
 
 int lc_NewStaticBody(lua_State *vm){
     //-> body
-    chipmunk_object *object_body = lua_newuserdata(vm, sizeof(chipmunk_object));
+    lc_object *object_body = lua_newuserdata(vm, sizeof(lc_object));
     object_body->type = Body;
     object_body->object = cpBodyNewStatic();
     lua_getfield(vm, LUA_REGISTRYINDEX, "chipmunk.bodymeta");
@@ -54,10 +54,10 @@ int lc_body_newindex(lua_State *vm){
     const char *key = lua_tostring(vm, 2);
     cpBody *body = (lc_GetBody(1, vm))->body;
     if (strcmp("pos", key) == 0 && lua_istable(vm, 3)){
-        cpBodySetPos(body, chipmunk_TableTocpVect(3, vm));
+        cpBodySetPos(body, lc_TableTocpVect(3, vm));
     }
     else if (strcmp("vel", key) == 0 && lua_istable(vm, 3)){
-        cpBodySetVel(body, chipmunk_TableTocpVect(3, vm));
+        cpBodySetVel(body, lc_TableTocpVect(3, vm));
     }
     else if (strcmp("angle", key) == 0 || strcmp("radangle", key) == 0){
         cpBodySetAngle(body, (cpFloat)lua_tonumber(vm, 3));
@@ -73,11 +73,11 @@ int lc_body_index(lua_State *vm){
     const char *key = lua_tostring(vm, 2);
     cpBody *body = (lc_GetBody(1, vm))->body;
     if (strcmp("pos", key) == 0){
-        chipmunk_cpVectToTable(cpBodyGetPos(body), vm);
+        lc_cpVectToTable(cpBodyGetPos(body), vm);
         return 1;
     }
     else if (strcmp("vel", key) == 0){
-        chipmunk_cpVectToTable(cpBodyGetVel(body), vm);
+        lc_cpVectToTable(cpBodyGetVel(body), vm);
         return 1;
     }
     else if (strcmp("angle", key) == 0 || strcmp("radangle", key) == 0){
@@ -102,7 +102,7 @@ int lc_body_gc(lua_State *vm){
 
 int lc_body_NewBoxShape(lua_State *vm){
     //body, with, height -> shape (box)
-    lc_object *body = lc_GetBody(1, vm);
+    lc_body *body = lc_GetBody(1, vm);
     if (body == NULL){
         printf("%p hasn't :NewBoxShape()\n", body);
         RETURN_NIL;
@@ -126,7 +126,7 @@ int lc_body_NewBoxShape(lua_State *vm){
 
 int lc_body_NewCircleShape(lua_State *vm){
     //body, radius, {offset}
-    lc_object *body = lc_GetBody(1, vm);
+    lc_body *body = lc_GetBody(1, vm);
     if (body == NULL){
         printf("%p hasn't :NewCircleShape()\n", body);
         lua_pushnil(vm);
@@ -144,7 +144,7 @@ int lc_body_NewCircleShape(lua_State *vm){
     }
     cpVect offset = cpvzero;
     if (lua_gettop(vm) > 2 && lua_istable(vm, 3)){
-        offset = chipmunk_TableTocpVect(3, vm);
+        offset = lc_TableTocpVect(3, vm);
     }
     lc_shape *shape = lc_NewCircleShape(body->body, radius, offset, vm);
     lua_pushvalue(vm, 1);
@@ -170,7 +170,7 @@ int lc_MomentForCircle(lua_State *vm){
     radius1 = lua_tonumber(vm, 2);
     radius2 = lua_tonumber(vm, 3);
     if (lua_gettop(vm) > 3 && lua_istable(vm, 3)){
-        offset = chipmunk_TableTocpVect(3, vm);}
+        offset = lc_TableTocpVect(3, vm);}
     lua_pushnumber(vm, cpMomentForCircle(m, radius1, radius2, offset));
     return 1;
 }
