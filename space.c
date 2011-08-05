@@ -60,7 +60,7 @@ int lc_space_index(lua_State *vm){
     cpSpace *space = (lc_GetSpace(1, vm))->space;
     const char *key = lua_tostring(vm, 2);
     if (strcmp("gravity", key) == 0){
-        chipmunk_cpVectToTable(cpSpaceGetGravity(space), vm);
+        lc_cpVectToTable(cpSpaceGetGravity(space), vm);
         return 1;
     }
     else if (strcmp("iterations", key) == 0){
