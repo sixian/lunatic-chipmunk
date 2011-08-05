@@ -75,8 +75,6 @@ inline lc_space *lc_GetSpace(int indexspace, lua_State *vm){
 
 typedef struct __lc_body{
     cpBody *body;
-    int shapes;//
-    int space;//ref to space
 }lc_body;
 
 inline lc_body *lc_GetBody(int indexbody, lua_State *vm){
@@ -101,8 +99,7 @@ int lc_MomentForCircle(lua_State *);
 
 typedef struct __lc_shape{
     cpShape *shape;
-    int body;//ref to body
-    int space;//ref to space
+    int bodyorspace;//ref to body or space (space body)
 }lc_shape;
 
 //Shapes are created with the a space's body or with a body.

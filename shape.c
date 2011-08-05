@@ -72,10 +72,9 @@ int lc_shape_index(lua_State *vm){
 
 int lc_shape_gc(lua_State *vm){
     lc_shape *shape = lc_GetShape(1, vm);
-    luaL_unref(vm, LUA_REGISTRYINDEX, shape->body);
-    luaL_unref(vm, LUA_REGISTRYINDEX, shape->space);
-    printf("Delete shape: %p\n", lua_touserdata(vm, 1));
+    luaL_unref(vm, LUA_REGISTRYINDEX, shape->bodyorspace);
     cpShapeFree(shape->shape);
     free(shape);
+    printf("Delete shape: %p\n", lua_touserdata(vm, 1));
     return 0;
 }
