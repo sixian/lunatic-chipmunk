@@ -19,6 +19,13 @@
 
 #include <lunatic_chipmunk.h>
 
+inline lc_shape *lc_GetShape(int indexshape, lua_State *vm){
+    lc_object *object = (lc_object *)lua_touserdata(vm, indexshape);
+    if (object == NULL || object->type == Body || object->type == Space){
+        return NULL;}
+    return (lc_shape *)object->object;
+}
+
 //-0, +1
 lc_shape *lc_NewBoxShape(cpBody *body, cpFloat width, cpFloat height, lua_State *vm){
     lc_object *object_shape = lua_newuserdata(vm, sizeof(lc_object));

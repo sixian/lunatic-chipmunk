@@ -54,6 +54,8 @@ typedef struct __lc_space{
     int shapes;//table with shapes
 }lc_space;
 
+lc_space *lc_GetSpace(int, lua_State *);
+
 int lc_NewSpace(lua_State *);
 int lc_space_newindex(lua_State *);
 int lc_space_index(lua_State *);
@@ -65,25 +67,13 @@ int lc_space_AddShape(lua_State *);
 int lc_space_RemoveShape(lua_State *);
 int lc_space_NewSegmentShape(lua_State *);
 
-inline lc_space *lc_GetSpace(int indexspace, lua_State *vm){
-    lc_object *object = (lc_object *)lua_touserdata(vm, indexspace);
-    if (object == NULL || object->type != Space){
-        return NULL;}
-    return (lc_space *)object->object;
-}
-
 //body
 
 typedef struct __lc_body{
     cpBody *body;
 }lc_body;
 
-inline lc_body *lc_GetBody(int indexbody, lua_State *vm){
-    lc_object *object = (lc_object *)lua_touserdata(vm, indexbody);
-    if (object == NULL || object->type != Body){
-        return NULL;}
-    return (lc_body *)object->object;
-}
+lc_body *lc_GetBody(int, lua_State *);
 
 int lc_NewBody(lua_State *);
 int lc_NewStaticBody(lua_State *);
@@ -103,17 +93,12 @@ typedef struct __lc_shape{
     int bodyorspace;//ref to body or space (space body)
 }lc_shape;
 
+lc_shape *lc_GetShape(int, lua_State *);
+
 //Shapes are created with the a space's body or with a body.
 lc_shape *lc_NewBoxShape(cpBody *, cpFloat, cpFloat, lua_State *);//-0, +1
 lc_shape *lc_NewCircleShape(cpBody *, cpFloat, cpVect, lua_State *);//-0, +1
 lc_shape *lc_NewSegmentShape(cpBody *, cpVect, cpVect, cpFloat, lua_State *);//-0, +1
-
-inline lc_shape *lc_GetShape(int indexshape, lua_State *vm){
-    lc_object *object = (lc_object *)lua_touserdata(vm, indexshape);
-    if (object == NULL || object->type == Body || object->type == Space){
-        return NULL;}
-    return (lc_shape *)object->object;
-}
 
 int lc_shape_newindex(lua_State *);
 int lc_shape_index(lua_State *);

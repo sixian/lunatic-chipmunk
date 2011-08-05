@@ -21,6 +21,13 @@
 #include <string.h>
 #include <lunatic_chipmunk.h>
 
+inline lc_space *lc_GetSpace(int indexspace, lua_State *vm){
+    lc_object *object = (lc_object *)lua_touserdata(vm, indexspace);
+    if (object == NULL || object->type != Space){
+        return NULL;}
+    return (lc_space *)object->object;
+}
+
 int lc_NewSpace(lua_State *vm){
     //-> space
     lc_object *object_space = lua_newuserdata(vm, sizeof(lc_object));

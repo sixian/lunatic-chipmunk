@@ -20,6 +20,13 @@
 #include <math.h>
 #include <lunatic_chipmunk.h>
 
+inline lc_body *lc_GetBody(int indexbody, lua_State *vm){
+    lc_object *object = (lc_object *)lua_touserdata(vm, indexbody);
+    if (object == NULL || object->type != Body){
+        return NULL;}
+    return (lc_body *)object->object;
+}
+
 int lc_NewBody(lua_State *vm){
     //mass, moi -> body
     cpFloat m = INFINITY, moi = INFINITY;
